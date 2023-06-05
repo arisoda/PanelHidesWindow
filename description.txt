@@ -1,4 +1,4 @@
 For power-users who often deal with many windows, this extension allows you to quickly hide the TOP-MOST maximized window just by middle-mouse clicking anywhere on the top panel. 
-This extension support multi-monitors in the sense that it does not hide any window that is not on the primary monitor. 
+This extension support multi-monitors in the sense that it actively(!) does not hide any window that is not on the primary monitor.
 
 It would be great if someone can make that this work on a per-monitor and per-top-panel basis.
