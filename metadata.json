@@ -1,7 +1,7 @@
 {
   "name": "PanelHidesWindow",
   "description": "Allows you to quickly hide the top-most maximized window just by middle-mouse clicking anywhere on the top panel.",
-  "shell-version": ["40", "41", "42", "43", "44"],
+  "shell-version": ["42", "43", "44"],
   "uuid": "PanelHidesWindow@arisoda.com",
   "version": 1
 }
