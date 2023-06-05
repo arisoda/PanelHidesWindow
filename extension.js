@@ -20,8 +20,9 @@
 
 
 const Main = imports.ui.main;
-const St = imports.gi.St;
 const Meta = imports.gi.Meta;
+
+let signalId = null;
 
 function init() {
   // Initialization code
@@ -32,7 +33,7 @@ function enable() {
   let topMonitor = global.display.get_primary_monitor(); // Get the primary monitor
 
   // Attach the button-press-event to the top panel
-  topPanel.connect('button-press-event', function (widget, event) {
+  signalId = topPanel.connect('button-press-event', function (widget, event) {
     // Check if the middle mouse button was clicked
     if (event.get_button() === 2) {
       // Middle mouse click detected
@@ -72,6 +73,11 @@ function enable() {
 }
 
 function disable() {
-  // Clean up code
+  if (signalId) {
+    // Disconnect the signal connection if it exists
+    Main.panel.disconnect(signalId);
+    signalId = null;
+  }
 }
+
 
