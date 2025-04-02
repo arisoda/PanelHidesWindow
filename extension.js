@@ -18,9 +18,8 @@
 
 /* exported init */
 
-
-const Main = imports.ui.main;
-const Meta = imports.gi.Meta;
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import Meta from 'gi://Meta';
 
 let signalId = null;
 
@@ -28,56 +27,57 @@ function init() {
   // Initialization code
 }
 
-function enable() {
-  let topPanel = Main.panel;
-  let topMonitor = global.display.get_primary_monitor(); // Get the primary monitor
+export default class PanelHidesWindowExtension {
 
-  // Attach the button-press-event to the top panel
-  signalId = topPanel.connect('button-press-event', function (widget, event) {
-    // Check if the middle mouse button was clicked
-    if (event.get_button() === 2) {
-      // Middle mouse click detected
+	enable() {
+		let topPanel = Main.panel;
+		let topMonitor = global.display.get_primary_monitor(); // Get the primary monitor
 
-      // Get the stack of windows
-      let windows = global.display.get_tab_list(Meta.TabList.NORMAL_ALL, null);
-      
-      // Find the topmost maximized window on the same monitor as the top panel
-      let topmostMaximizedWindow = null;
-      let topmostWindowLayer = -1;
+		// Attach the button-press-event to the top panel
+		signalId = topPanel.connect('button-press-event', function (widget, event) {
+		// Check if the middle mouse button was clicked
+		if (event.get_button() === 2) {
+			// Middle mouse click detected
 
-      for (let i = 0; i < windows.length; i++) {
-        let window = windows[i];
+			// Get the stack of windows
+			let windows = global.display.get_tab_list(Meta.TabList.NORMAL_ALL, null);
+			
+			// Find the topmost maximized window on the same monitor as the top panel
+			let topmostMaximizedWindow = null;
+			let topmostWindowLayer = -1;
 
-        // Check if the window is maximized and on the same monitor
-        if (
-          window.maximized_horizontally &&
-          window.maximized_vertically &&
-          window.get_monitor() === topMonitor
-        ) {
-          let windowLayer = window.get_layer();
-          
-          // Check if the window is at the top layer
-          if (windowLayer > topmostWindowLayer) {
-            topmostMaximizedWindow = window;
-            topmostWindowLayer = windowLayer;
-          }
-        }
-      }
+			for (let i = 0; i < windows.length; i++) {
+			  let window = windows[i];
 
-      // Hide the topmost maximized window on the same monitor, if found
-      if (topmostMaximizedWindow) {
-        topmostMaximizedWindow.minimize();
-      }
-    }
-  });
+			  // Check if the window is maximized and on the same monitor
+			  if (
+			    window.maximized_horizontally &&
+			    window.maximized_vertically &&
+			    window.get_monitor() === topMonitor
+			  ) {
+			    let windowLayer = window.get_layer();
+			    
+			    // Check if the window is at the top layer
+			    if (windowLayer > topmostWindowLayer) {
+			      topmostMaximizedWindow = window;
+			      topmostWindowLayer = windowLayer;
+			    }
+			  }
+			}
+
+			// Hide the topmost maximized window on the same monitor, if found
+			if (topmostMaximizedWindow) {
+			  topmostMaximizedWindow.minimize();
+			}
+		}
+		});
+	}
+	
+	disable() {
+		if (signalId) {
+		  // Disconnect the signal connection if it exists
+		  Main.panel.disconnect(signalId);
+		  signalId = null;
+		}
+	}
 }
-
-function disable() {
-  if (signalId) {
-    // Disconnect the signal connection if it exists
-    Main.panel.disconnect(signalId);
-    signalId = null;
-  }
-}
-
-
