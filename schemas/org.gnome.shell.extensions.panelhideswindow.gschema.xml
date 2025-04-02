@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.panelhideswindow" path="/org/gnome/shell/extensions/panelhideswindow/">
+    <key name="hide-focused-instead" type="b">
+      <default>false</default>
+      <summary>Hide currently focused window instead of maximized</summary>
+      <description>If true, hides the currently focused window; otherwise hides the topmost maximized window.</description>
+    </key>
+  </schema>
+</schemalist>
+

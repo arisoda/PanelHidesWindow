@@ -16,68 +16,67 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-/* exported init */
-
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import Meta from 'gi://Meta';
+import Gio from 'gi://Gio';
+import GLib from 'gi://GLib';
+import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 
-let signalId = null;
+export default class PanelHidesWindowExtension extends Extension {
+    enable() {
+        // Load custom schema from local schemas directory
+        const schemaDir = GLib.build_filenamev([this.path, 'schemas']);
+        const schemaSource = Gio.SettingsSchemaSource.new_from_directory(
+            schemaDir,
+            Gio.SettingsSchemaSource.get_default(),
+            false
+        );
 
-function init() {
-  // Initialization code
+        const schemaObj = schemaSource.lookup('org.gnome.shell.extensions.panelhideswindow', true);
+        this.settings = new Gio.Settings({ settings_schema: schemaObj });
+
+        const topPanel = Main.panel;
+        const topMonitor = global.display.get_primary_monitor(); // Get primary monitor
+
+        // Attach middle-click event handler to the top panel
+        this.signalId = topPanel.connect('button-press-event', (widget, event) => {
+            if (event.get_button() === 2) { // Middle mouse click
+                let windows = global.display.get_tab_list(Meta.TabList.NORMAL_ALL, null);
+                let targetWindow = null;
+
+                if (this.settings.get_boolean('hide-focused-instead')) {
+                    // Hide currently focused window if on primary monitor
+                    const focused = global.display.get_focus_window();
+                    if (focused && focused.get_monitor() === topMonitor)
+                        targetWindow = focused;
+                } else {
+                    // Hide topmost maximized window on primary monitor
+                    let topmostLayer = -1;
+                    for (let window of windows) {
+                        if (window.maximized_horizontally && window.maximized_vertically &&
+                            window.get_monitor() === topMonitor) {
+                            const windowLayer = window.get_layer();
+                            if (windowLayer > topmostLayer) {
+                                targetWindow = window;
+                                topmostLayer = windowLayer;
+                            }
+                        }
+                    }
+                }
+
+                if (targetWindow)
+                    targetWindow.minimize(); // Minimize selected window
+            }
+        });
+    }
+
+    disable() {
+        // Disconnect event handler on disable
+        if (this.signalId) {
+            Main.panel.disconnect(this.signalId);
+            this.signalId = null;
+        }
+        this.settings = null;
+    }
 }
 
-export default class PanelHidesWindowExtension {
-
-	enable() {
-		let topPanel = Main.panel;
-		let topMonitor = global.display.get_primary_monitor(); // Get the primary monitor
-
-		// Attach the button-press-event to the top panel
-		signalId = topPanel.connect('button-press-event', function (widget, event) {
-		// Check if the middle mouse button was clicked
-		if (event.get_button() === 2) {
-			// Middle mouse click detected
-
-			// Get the stack of windows
-			let windows = global.display.get_tab_list(Meta.TabList.NORMAL_ALL, null);
-			
-			// Find the topmost maximized window on the same monitor as the top panel
-			let topmostMaximizedWindow = null;
-			let topmostWindowLayer = -1;
-
-			for (let i = 0; i < windows.length; i++) {
-			  let window = windows[i];
-
-			  // Check if the window is maximized and on the same monitor
-			  if (
-			    window.maximized_horizontally &&
-			    window.maximized_vertically &&
-			    window.get_monitor() === topMonitor
-			  ) {
-			    let windowLayer = window.get_layer();
-			    
-			    // Check if the window is at the top layer
-			    if (windowLayer > topmostWindowLayer) {
-			      topmostMaximizedWindow = window;
-			      topmostWindowLayer = windowLayer;
-			    }
-			  }
-			}
-
-			// Hide the topmost maximized window on the same monitor, if found
-			if (topmostMaximizedWindow) {
-			  topmostMaximizedWindow.minimize();
-			}
-		}
-		});
-	}
-	
-	disable() {
-		if (signalId) {
-		  // Disconnect the signal connection if it exists
-		  Main.panel.disconnect(signalId);
-		  signalId = null;
-		}
-	}
-}
