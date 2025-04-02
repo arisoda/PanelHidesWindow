@@ -1,0 +1,1 @@
+Just a small GNOME extension that lets you hide windows very quickly. I have sometimes so many windows open it's hard to see the forest for the trees. What could be better to hide the windows cloaking your view in an INSTANT? Don't forget to check the branch with an additinoal option.
