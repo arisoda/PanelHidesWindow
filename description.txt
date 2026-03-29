@@ -1,12 +1,17 @@
-Allows you to quickly hide (minimize) the top-most maximized window just by middle-mouse clicking anywhere on the TOP PANEL (not the top bar of a window).
+Allows you to quickly hide the top-most maximized window just by middle-mouse clicking anywhere on the TOP PANEL (not the top bar of a window).
 
 Advantages:
-1. You can hide windows more quickly (in a reflex, requiring less accuracy)
-2. You can hide ALL maximized windows, even those that don't have a top bar.
-3. You can hide a maximized window even if it's BEHIND multiple unmaximized windows)
+1. You can hide windows more quickly (in a reflex, requiring less accuracy).
+2. You can hide windows by using just your peripheral vision and 1% of your focus while your eyes are already elsewhere on the screen.
+3. You can hide ALL maximized windows, even those that don't have a top bar.
+4. You can hide a maximized window even if it's BEHIND multiple unmaximized windows)
+
+Sometimes windows APPEAR to be maximized but aren't, which can cause trouble for some people. Use the extension "Truly Maximized Windows" to fix that.
+
+Bonus: this works well in conjunction with the Tweaks setting to hide any window when middle-mouse clicking the top bar of a window.
+
+Added but still under review: Settings window to support option to hide ANY window, not just maximized windows.
 
 This extension supports multi-monitors in the sense that it actively(!) does not hide any window that is not on the primary monitor.
 
 PLEASE LEAVE A REVIEW. Any critique / suggestion is welcome.
-
-It would be great if someone can add the functionality to support multiple top panels (if someone were to have multiple top panels on different monitors).
